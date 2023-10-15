@@ -20,12 +20,16 @@
     color: #000 !important;
   }
   #header{
-    width: 80vh;
+    width: 60vh;
     margin: auto;
   }
   #header > h1{
     font-size: 30px;
     font-weight: 700;
+  }
+  #header > h1 > a{
+    text-decoration: none;
+    color: inherit;
   }
   #navbarNav{
     position: fixed;
@@ -38,9 +42,10 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div id="header"><h1>Attendance System</h1></div>
+  <div id="header"><h1><a href="{% url 'home' %}">Attendance System</a></h1></div>
   <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav ml-auto">
+    {% if user.is_authenticated %}
+      <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
         <span class="nav-link">Hello, {{ request.user.faculty }}</span>
       </li>
@@ -54,5 +59,6 @@
         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
       </li>
     </ul>
+    {% endif %}
   </div>
 </nav>

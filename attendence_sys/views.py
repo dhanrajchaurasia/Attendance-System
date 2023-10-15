@@ -105,8 +105,8 @@ def takeAttendence(request):
             'faculty':request.user.faculty
             }
         if Attendence.objects.filter(date = str(date.today()),branch = details['branch'], year = details['year'], section = details['section'],period = details['period']).count() != 0 :
-            messages.error(request, "Attendence already recorded.")
-            return redirect('home')
+            messages.error(request, "Attendence is already recorded.")
+            return redirect('attendence')
         else:
             students = Student.objects.filter(branch = details['branch'], year = details['year'], section = details['section'])
             names = Recognizer(details)
@@ -130,11 +130,12 @@ def takeAttendence(request):
                     attendence.save()
             attendences = Attendence.objects.filter(date = str(date.today()),branch = details['branch'], year = details['year'], section = details['section'],period = details['period'])
             context = {"attendences":attendences, "ta":True}
-            messages.success(request, "Attendence taking Success")
-            return render(request, 'attendence_sys/attendence.html', context)        
+            messages.success(request, "Attendance is done!")
+            return render(request, 'attendence_sys/attendence.html', context)     
     context = {}
-    return render(request, 'attendence_sys/home.html', context)
+    return render(request, 'attendence_sys/takeAttendance.html', context)
 
+@login_required(login_url = 'login')
 def searchAttendence(request):
     attendences = Attendence.objects.all()
     myFilter = AttendenceFilter(request.GET, queryset=attendences)
@@ -143,11 +144,38 @@ def searchAttendence(request):
     return render(request, 'attendence_sys/attendence.html', context)
 
 
+@login_required(login_url = 'login')
 def facultyProfile(request):
     faculty = request.user.faculty
     form = FacultyForm(instance = faculty)
     context = {'form':form}
     return render(request, 'attendence_sys/facultyForm.html', context)
+
+
+@login_required(login_url = 'login')
+def addStudent(request):
+    studentForm = CreateStudentForm()
+
+    if request.method == 'POST':
+        studentForm = CreateStudentForm(data = request.POST, files=request.FILES)
+        # print(request.POST)
+        stat = False 
+        try:
+            student = Student.objects.get(registration_id = request.POST['registration_id'])
+            stat = True
+        except:
+            stat = False
+        if studentForm.is_valid() and (stat == False):
+            studentForm.save()
+            name = studentForm.cleaned_data.get('firstname') +" " +studentForm.cleaned_data.get('lastname')
+            messages.success(request, 'Student ' + name + ' was successfully added.')
+            return redirect('add')
+        else:
+            messages.error(request, 'Student with Registration Id '+request.POST['registration_id']+' already exists.')
+            return redirect('add')
+
+    context = {'studentForm':studentForm}
+    return render(request, 'attendence_sys/addStudent.html', context)
 
 
 

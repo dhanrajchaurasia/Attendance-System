@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('updateStudentRedirect/', views.updateStudentRedirect, name='updateStudentRedirect'),
     path('updateStudent/', views.updateStudent, name='updateStudent'),
+    path('add/', views.addStudent, name='add'),
     path('attendence/', views.takeAttendence, name='attendence'),
     # path('video_feed/', views.videoFeed, name='video_feed'),
     # path('videoFeed/', views.getVideo, name='videoFeed'),
